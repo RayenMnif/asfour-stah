@@ -1,6 +1,7 @@
 import pygame
 from random import randint
 from sys import exit
+from time import sleep
 
 """ to do 
 - add a working score
@@ -31,9 +32,11 @@ class Player(pygame.sprite.Sprite):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_SPACE] and self.rect.top <= 490: self.gravity = -7 
     def update(self):
+        global game_active 
         if game_active:
             self.physics()
             self.jump()
+            if self.rect.y >= 450 : game_active = False
         if not game_active: self.rect.center = (140, 360)
         self.animations()
 
