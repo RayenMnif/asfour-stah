@@ -59,7 +59,7 @@ clock = pygame.time.Clock()
 
 game_active = False
 
-font = pygame.font.Font("FlappyBirdy.ttf", 12)
+font = pygame.font.Font("font.otf", 16)
 
 score = 0
 
@@ -95,10 +95,16 @@ while True:
 
     player.draw(screen)
     player.update()
-    
+
+    tmp_score = score
+    if tmp_score == -1 : tmp_score = 0
+    score_surf = font.render(f"score : {int(tmp_score)}", True, "black").convert_alpha()
+    score_rect = score_surf.get_rect(topleft = (5, 5)) 
+
     if game_active:
         obstacles.draw(screen)
         obstacles.update()
+        screen.blit(score_surf, score_rect)
         game_active = not (pygame.sprite.spritecollide(player.sprite, obstacles, False))
     else:
         obstacles.empty()
