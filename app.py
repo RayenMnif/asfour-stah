@@ -2,10 +2,6 @@ import pygame
 from random import randint
 from sys import exit
 
-""" to do 
-- add a working score
-"""
-
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
