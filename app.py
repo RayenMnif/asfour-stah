@@ -1,7 +1,6 @@
 import pygame
 from random import randint
 from sys import exit
-from time import sleep
 
 """ to do 
 - add a working score
@@ -30,7 +29,7 @@ class Player(pygame.sprite.Sprite):
         self.rect.y += self.gravity
     def jump(self):
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_SPACE] and self.rect.top <= 490: self.gravity = -7 
+        if keys[pygame.K_SPACE] and self.rect.top <= 490: self.gravity = -6 
     def update(self):
         global game_active 
         if game_active:
@@ -41,19 +40,16 @@ class Player(pygame.sprite.Sprite):
         self.animations()
 
 class Obstacles(pygame.sprite.Sprite):
-    def __init__(self, type):
+    def __init__(self, type, ypos):
         super().__init__()
         self.image = pygame.image.load("sprites/pipe-green.png").convert_alpha()
-        self.rect = self.image.get_rect(midbottom = (randint(280, 350), randint(570, 700)))
+        self.rect = self.image.get_rect(topleft = (280, ypos))
         if type == "down":
-            self.image = pygame.transform.rotate(self.image, 180)
-            self.rect = self.image.get_rect(center = (randint(280, 350), randint(-40, 20)))
+            self.image = pygame.transform.rotate(self.image, 180).convert_alpha()
+            self.rect = self.image.get_rect(bottomleft = (280, ypos - 80))
     def update(self):
         self.rect.x -= 5
         if self.rect.x <= -200: self.kill() 
-
-def get_score():
-    return 
 
 pygame.init()
 
@@ -64,6 +60,8 @@ clock = pygame.time.Clock()
 game_active = False
 
 font = pygame.font.Font("FlappyBirdy.ttf", 12)
+
+score = 0
 
 # game image
 bg_image = pygame.image.load("sprites/background-day.png").convert_alpha()
@@ -77,22 +75,21 @@ obstacles = pygame.sprite.Group()
 
 # Obstacles timer
 obstacles_timer = pygame.USEREVENT + 1
-pygame.time.set_timer(obstacles_timer, 800)
+pygame.time.set_timer(obstacles_timer, 1000)
 
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT: pygame.quit()
         if game_active:
             if event.type == obstacles_timer: 
-                if randint(0,1):
-                    obstacles.add(Obstacles("normal"))
-                else:
-                    obstacles.add(Obstacles("down"))
+                    ypos = randint(200, 400)       
+                    obstacles.add(Obstacles("normal", ypos))
+                    obstacles.add(Obstacles("down", ypos))
+                    score += 1
         else:
+            score = -1
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 game_active = True
-        """"if event.type == pygame.MOUSEBUTTONDOWN:
-            print(pygame.mouse.get_pos()) # for debugging """
 
     screen.blit(bg_image, (0,0))
 
